@@ -1,0 +1,3245 @@
+<!DOCTYPE html><html lang="en" data-theme="neon"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Midnight Casino - Klondike Solitaire (DSA Edition)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&amp;family=Righteous&amp;display=swap" rel="stylesheet"><style id="neon-coast-styles">:root { --bg-table: radial-gradient(circle at 50% 18%, #2d114d 0%, #15082e 45%, #080314 100%); --accent-gold: #00f0ff; --accent-gold-glow: rgba(0, 240, 255, 0.45); --card-border: rgba(255, 42, 133, 0.35); --hud-bg: rgba(14, 7, 28, 0.82); --slot-border: rgba(0, 240, 255, 0.35); --card-back-bg: linear-gradient(135deg, #ff007f 0%, #ff5e00 100%); --font-display: 'Righteous', 'Cinzel', cursive; --font-hud: 'Orbitron', 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; } body { background: linear-gradient(180deg, #0e0521 0%, #20093b 35%, #4a0e4e 65%, #180526 100%) !important; color: #f5f3ff !important; font-family: var(--font-hud); } .neon-chrome-text { font-family: 'Righteous', cursive; background: linear-gradient(180deg, #ffffff 0%, #d8f8ff 45%, #00f0ff 52%, #ff2a85 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 8px rgba(255, 42, 133, 0.6)); } .neon-btn { border-color: rgba(0, 240, 255, 0.4) !important; background: rgba(14, 7, 30, 0.6) !important; box-shadow: 0 0 10px rgba(0, 240, 255, 0.15); transition: all 0.2s ease; } .neon-btn:hover { border-color: #ff007f !important; box-shadow: 0 0 15px rgba(255, 0, 127, 0.45); transform: translateY(-1px); } .solitaire-card { border-radius: 8px; } .solitaire-card:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 10px 22px rgba(0,0,0,0.6), 0 0 16px rgba(0, 240, 255, 0.45); } .solitaire-card .card-face { border-radius: 8px !important; border: 1.5px solid rgba(255, 255, 255, 0.18) !important; } .card-front { background: #faf9f6 !important; box-shadow: 0 4px 15px rgba(0,0,0,0.45); } .card-front.red-suit { color: #e6005c !important; text-shadow: 0 0 8px rgba(230, 0, 92, 0.35); } .card-front.black-suit { color: #0a1128 !important; } .card-back { background: linear-gradient(145deg, #ff007a 0%, #9900ef 50%, #00f0ff 100%) !important; box-shadow: inset 0 0 12px rgba(0,0,0,0.5); } .card-back-pattern { border: 1.5px solid rgba(255, 255, 255, 0.6) !important; background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0, rgba(255,255,255,0.18) 2px, transparent 2px, transparent 7px), repeating-linear-gradient(-45deg, rgba(0,240,255,0.3) 0, rgba(0,240,255,0.3) 2px, transparent 2px, transparent 7px) !important; } .card-slot { border: 1.5px dashed rgba(0, 240, 255, 0.35) !important; background: rgba(14, 7, 30, 0.45) !important; box-shadow: inset 0 0 12px rgba(0, 240, 255, 0.08); backdrop-blur: 4px; } .card-slot.valid-target { border-color: #00f0ff !important; box-shadow: 0 0 20px rgba(0, 240, 255, 0.8), inset 0 0 12px rgba(0, 240, 255, 0.4) !important; } .tableau-glass-plate { background: rgba(13, 6, 26, 0.72); border: 1px solid rgba(0, 240, 255, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 24px rgba(255, 42, 133, 0.15); backdrop-filter: blur(12px); border-radius: 16px; } .synth-grid { background-size: 40px 40px; background-image: linear-gradient(to right, rgba(0, 240, 255, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 42, 133, 0.08) 1px, transparent 1px); }</style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-table: radial-gradient(circle at 50% 30%, #0d3822 0%, #061c11 65%, #020905 100%);
+      --accent-gold: #e5b958;
+      --accent-gold-glow: rgba(229, 185, 88, 0.4);
+      --card-border: rgba(229, 185, 88, 0.25);
+      --hud-bg: rgba(6, 28, 17, 0.75);
+      --slot-border: rgba(229, 185, 88, 0.2);
+      --card-back-bg: #1c352d;
+      --card-back-accent: #2e604f;
+      --font-display: 'Cinzel', serif;
+      --font-hud: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="neon"] {
+      --bg-table: radial-gradient(circle at 50% 30%, #1c0a35 0%, #0d041a 65%, #030008 100%);
+      --accent-gold: #00f2fe;
+      --accent-gold-glow: rgba(0, 242, 254, 0.45);
+      --card-border: rgba(0, 242, 254, 0.35);
+      --hud-bg: rgba(13, 4, 26, 0.85);
+      --slot-border: rgba(0, 242, 254, 0.25);
+      --card-back-bg: #2b0b4a;
+      --card-back-accent: #ff007f;
+    }
+
+    [data-theme="paper"] {
+      --bg-table: radial-gradient(circle at 50% 30%, #f4eee2 0%, #e8decb 70%, #d8cdb7 100%);
+      --accent-gold: #8c6b32;
+      --accent-gold-glow: rgba(140, 107, 50, 0.25);
+      --card-border: rgba(140, 107, 50, 0.3);
+      --hud-bg: rgba(244, 238, 226, 0.88);
+      --slot-border: rgba(140, 107, 50, 0.3);
+      --card-back-bg: #533e2d;
+      --card-back-accent: #8c6b32;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      background: var(--bg-table);
+      font-family: var(--font-hud);
+      overflow: hidden;
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    [data-theme="paper"] body {
+      color: #2b2115;
+    }
+
+    /* Solitaire Card Styling: 5:7 Aspect Ratio */
+    .solitaire-card {
+      width: clamp(42px, 12.2vw, 84px);
+      aspect-ratio: 5 / 7;
+      perspective: 1000px;
+      touch-action: none;
+      transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease;
+      will-change: transform, left, top;
+    }
+
+    .solitaire-card.is-dragging {
+      z-index: 9999 !important;
+      opacity: 0.96;
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.65), 0 0 15px var(--accent-gold-glow);
+      pointer-events: none;
+      transform: scale(1.05) rotate(2deg);
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: clamp(4px, 1vw, 8px);
+    }
+
+    .solitaire-card.face-up .card-inner {
+      transform: rotateY(0deg);
+    }
+
+    .solitaire-card.face-down .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: clamp(4px, 1vw, 8px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--card-border);
+    }
+
+    .card-front {
+      background: #fbfbfa;
+      color: #111;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: clamp(2px, 0.7vw, 6px);
+    }
+
+    .card-front.red-suit {
+      color: #d11a2a;
+    }
+
+    .card-front.black-suit {
+      color: #161a1d;
+    }
+
+    .card-back {
+      background: var(--card-back-bg);
+      transform: rotateY(180deg);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-back-pattern {
+      width: 88%;
+      height: 88%;
+      border: 1px solid var(--accent-gold);
+      border-radius: 4px;
+      background-image: repeating-linear-gradient(45deg, var(--card-back-accent) 0, var(--card-back-accent) 2px, transparent 2px, transparent 6px),
+                        repeating-linear-gradient(-45deg, var(--card-back-accent) 0, var(--card-back-accent) 2px, transparent 2px, transparent 6px);
+      opacity: 0.85;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-slot {
+      width: clamp(42px, 12.2vw, 84px);
+      aspect-ratio: 5 / 7;
+      border-radius: clamp(4px, 1vw, 8px);
+      border: 1.5px dashed var(--slot-border);
+      background: rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .card-slot.valid-target {
+      border-color: var(--accent-gold);
+      background: rgba(229, 185, 88, 0.18);
+      box-shadow: 0 0 16px var(--accent-gold-glow);
+    }
+
+    .card-slot.invalid-target {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    .hint-highlight {
+      animation: pulse-gold 1.2s infinite alternate;
+    }
+
+    @keyframes pulse-gold {
+      from {
+        box-shadow: 0 0 4px var(--accent-gold);
+        transform: scale(1);
+      }
+      to {
+        box-shadow: 0 0 18px var(--accent-gold), 0 0 24px rgba(229, 185, 88, 0.8);
+        transform: scale(1.04);
+      }
+    }
+
+    @keyframes shake-fail {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .animate-shake {
+      animation: shake-fail 0.35s ease-in-out;
+    }
+
+    /* Custom Scrollbar for X-Ray Panel */
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(229, 185, 88, 0.3);
+      border-radius: 4px;
+    }
+
+    /* Win Canvas */
+    #winCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 8000;
+    }
+  </style>
+</head>
+<body class="relative h-screen w-screen flex flex-col justify-between selection:bg-amber-400 selection:text-black">
+
+  <!-- TOP HUD -->
+  <header class="w-full z-40 px-3 py-2 border-b border-white/10 backdrop-blur-md flex items-center justify-between shadow-lg" style="background: var(--hud-bg);">
+    <div class="flex items-center gap-2 md:gap-3">
+      <div class="flex items-center gap-2">
+        <div class="flex flex-col leading-none font-['Righteous']">
+          <span class="text-white text-xs md:text-sm font-bold tracking-wider">NEON</span>
+          <span class="text-[#ff007a] text-xs md:text-sm font-bold tracking-wider">COAST</span>
+        </div>
+        <div class="flex flex-col leading-tight text-[8px] md:text-[9px] font-mono text-zinc-400 pl-1.5 border-l border-white/20">
+          <span class="text-zinc-400 font-semibold">— VICE CITY</span>
+          <span class="text-[#ff007a] font-bold">SOLITAIRE</span>
+        </div>
+        <div class="w-10 h-6 md:w-12 md:h-7 rounded-full bg-gradient-to-r from-[#ff007a] via-[#8a2be2] to-[#00f0ff] p-[2px] shadow-[0_0_15px_rgba(255,0,122,0.6)] ml-1 flex items-center justify-end px-1">
+          <div class="w-4 h-4 md:w-5 md:h-5 rounded-full bg-cyan-300 shadow-[0_0_8px_#00f0ff]"></div>
+        </div>
+      </div>
+
+      <div class="hidden sm:flex items-center gap-2 ml-2">
+        <!-- SCORE -->
+        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0a071b] border border-cyan-400/40 text-xs font-mono">
+          <span class="text-zinc-400 text-[10px]">SCORE</span>
+          <span id="hudScore" class="font-bold text-cyan-300">0</span>
+        </div>
+        <!-- MOVES -->
+        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0a071b] border border-cyan-400/40 text-xs font-mono">
+          <span class="text-zinc-400 text-[10px]">MOVES</span>
+          <span id="hudMoves" class="font-bold text-cyan-300">0</span>
+        </div>
+        <!-- TIME -->
+        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0a071b] border border-amber-400/50 text-xs font-mono">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-zinc-400 text-[10px]">TIME</span>
+          <span id="hudTimer" class="font-bold text-amber-300">00:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex items-center gap-1.5 md:gap-2">
+      <!-- Mobile Stats compact -->
+      <div class="sm:hidden flex items-center gap-2 text-[11px] font-mono text-zinc-300 mr-1">
+        <span><b id="hudScoreMobile" class="text-amber-400">0</b> pts</span>
+        <span><span id="hudTimerMobile">00:00</span></span>
+      </div>
+
+      <button id="btnHint" title="Hint (H)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-xs text-cyan-200 border border-cyan-400/40 flex items-center gap-1.5 transition neon-btn shadow-[0_0_8px_rgba(0,240,255,0.2)]">
+        <svg class="w-3.5 h-3.5 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+        <span class="font-mono font-bold">HINT</span>
+      </button>
+
+      <button id="btnUndo" title="Undo (U)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-xs text-purple-200 border border-purple-400/40 flex items-center gap-1.5 transition neon-btn">
+        <svg class="w-3.5 h-3.5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a5 5 0 015 5v2m0 0l-4-4m4 4l4-4M3 10l4 4M3 10l4-4"></path></svg>
+        <span class="font-mono font-bold">UNDO</span>
+      </button>
+
+      <button id="btnRedo" title="Redo (R)" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 text-xs text-purple-200 border border-purple-400/40 flex items-center gap-1.5 transition neon-btn">
+        <svg class="w-3.5 h-3.5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10H11a5 5 0 00-5 5v2m0 0l4-4m-4 4l-4-4m18-6l-4 4m4-4l-4-4"></path></svg>
+        <span class="font-mono font-bold">REDO</span>
+      </button>
+
+      <!-- Draw 1/3 Toggle -->
+      <button id="btnDrawMode" class="px-3 py-0.5 rounded-full bg-[#20053b] hover:bg-[#32085c] border border-pink-500/50 text-pink-300 transition neon-btn flex flex-col items-center leading-none" title="Toggle Draw Mode">
+        <span class="text-[9px] font-mono tracking-wider">DRAW</span>
+        <span id="drawModeLabel" class="text-xs font-mono font-bold text-white">1</span>
+      </button>
+
+      <!-- Sound Toggle -->
+      <button id="btnSound" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-cyan-400/40 text-cyan-200 hover:text-white transition neon-btn flex items-center gap-1 text-xs font-mono font-bold" title="Sound Toggle">
+        <svg id="soundIconOn" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+        <svg id="soundIconOff" class="w-3.5 h-3.5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+        <span>SYNTH</span>
+      </button>
+
+      <!-- Theme Switcher -->
+      <button id="btnTheme" class="px-3 py-1 rounded-full bg-[#20053b] hover:bg-[#300858] border border-pink-500/50 text-pink-200 transition neon-btn text-xs font-mono font-bold flex items-center gap-1.5 shadow-[0_0_10px_rgba(255,0,122,0.3)]" title="Switch Theme">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#ff007a]"></span>
+        <span>NEON COAST</span>
+        <span class="text-[9px]">▼</span>
+      </button>
+
+      <!-- X-Ray Toggle -->
+      <button id="btnXRay" class="px-3 py-1 rounded-full bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-400 text-cyan-300 text-xs font-mono font-bold flex items-center gap-1.5 shadow-[0_0_10px_rgba(0,240,255,0.3)] transition">
+        <span>X-RAY</span>
+        <span class="w-2 h-2 rounded-full bg-[#ff007a] animate-pulse"></span>
+      </button>
+
+      <!-- New Game -->
+      <button id="btnNewGame" class="px-3.5 py-1.5 rounded-full font-['Righteous'] bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 hover:from-pink-400 hover:to-amber-300 text-slate-950 font-bold text-xs tracking-wider transition active:scale-95 shadow-[0_0_16px_rgba(255,42,133,0.6)]">NEW DEAL</button>
+    </div>
+  </header>
+
+  <!-- TABLE FELT / MAIN PLAYING AREA -->
+  <main class="relative flex-1 w-full max-w-5xl mx-auto px-2 md:px-4 py-2 flex flex-col justify-start gap-4 md:gap-6 overflow-hidden"><div class="absolute inset-0 pointer-events-none overflow-hidden z-0"><div class="absolute inset-0 synth-grid opacity-35"></div><div class="absolute top-2 left-1/2 -translate-x-1/2 w-72 h-72 md:w-96 md:h-96 rounded-full bg-gradient-to-t from-pink-500 via-amber-400 to-yellow-300 opacity-25 blur-xl"></div><div class="absolute top-10 left-1/2 -translate-x-1/2 w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-t from-[#ff007f] to-[#ffb700] opacity-40 shadow-[0_0_60px_rgba(255,0,127,0.6)] flex flex-col justify-end overflow-hidden"><div class="w-full h-1 bg-black/40 mb-1"></div><div class="w-full h-1.5 bg-black/40 mb-1.5"></div><div class="w-full h-2 bg-black/40 mb-2"></div><div class="w-full h-3 bg-black/50 mb-3"></div><div class="w-full h-4 bg-black/60 mb-3"></div></div><svg class="absolute bottom-0 -left-6 md:left-4 w-40 md:w-56 h-auto opacity-35 text-[#0a0314] fill-current drop-shadow-[0_0_12px_rgba(255,0,127,0.3)]" viewBox="0 0 100 120"><path d="M12 120 C18 90 28 60 36 28 C28 26 12 34 2 48 C16 38 28 32 38 31 C36 22 28 14 16 10 C28 14 36 20 40 28 C46 16 54 8 70 2 C58 10 50 18 44 29 C56 22 72 20 86 24 C72 26 56 30 45 35 C58 38 72 46 82 58 C68 50 54 44 42 40 C34 68 24 94 18 120 Z"></path></svg><svg class="absolute bottom-0 -right-6 md:right-4 w-36 md:w-52 h-auto opacity-35 text-[#0a0314] fill-current scale-x-[-1] drop-shadow-[0_0_12px_rgba(0,240,255,0.3)]" viewBox="0 0 100 120"><path d="M12 120 C18 90 28 60 36 28 C28 26 12 34 2 48 C16 38 28 32 38 31 C36 22 28 14 16 10 C28 14 36 20 40 28 C46 16 54 8 70 2 C58 10 50 18 44 29 C56 22 72 20 86 24 C72 26 56 30 45 35 C58 38 72 46 82 58 C68 50 54 44 42 40 C34 68 24 94 18 120 Z"></path></svg><div class="absolute inset-2 md:inset-4 tableau-glass-plate -z-10"></div></div>
+    
+    <!-- Top Row: Stock + Waste (left) and Foundations (right) -->
+    <div class="w-full flex items-center justify-between">
+      <!-- Stock & Waste (Queue & Stack) -->
+      <div class="flex items-center gap-2 md:gap-4">
+        <!-- Stock (Queue) -->
+        <div class="relative">
+          <div id="stockSlot" class="card-slot cursor-pointer hover:border-amber-400" title="Stock Queue - Click to Draw">
+            <div class="w-full h-full rounded card-back flex items-center justify-center">
+              <div class="card-back-pattern flex items-center justify-center">
+                <span id="stockCenterNum" class="text-cyan-300 font-mono font-bold text-sm drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]">24</span>
+              </div>
+            </div>
+            <span id="stockBadge" class="absolute bottom-1 right-1 text-[9px] font-mono text-cyan-200 bg-black/80 px-1 rounded border border-cyan-400/40">24</span>
+          </div>
+          <span class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-mono text-zinc-400 tracking-wider">STOCK</span>
+        </div>
+
+        <!-- Waste (Stack) -->
+        <div class="relative">
+          <div id="wasteSlot" class="card-slot relative" style="min-width: clamp(42px, 12.2vw, 84px);"><span class="text-zinc-600 text-xs">∅</span></div>
+          <span class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-mono text-zinc-400 tracking-wider">WASTE</span>
+        </div>
+      </div>
+
+      <!-- Seed Display Tag -->
+      <div class="hidden md:flex flex-col items-center">
+        <span class="text-[9px] text-zinc-400 font-mono tracking-widest uppercase">VICE TRACK SEED</span>
+        <button id="btnCopySeed" class="text-xs font-mono text-amber-300 hover:text-amber-200 border border-amber-400/60 px-3 py-0.5 rounded-full bg-black/60 hover:bg-black/80 transition flex items-center gap-1.5 shadow-[0_0_8px_rgba(251,191,36,0.25)]" title="Click to copy seed">
+          <span id="currentSeedDisplay" class="font-bold tracking-wider">123456</span>
+          <svg class="w-3 h-3 text-amber-300/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+        </button>
+      </div>
+
+      <!-- Foundations (4 Stacks: Hearts, Diamonds, Clubs, Spades) -->
+      <div class="flex items-center gap-1.5 md:gap-3">
+        <!-- Spades Foundation -->
+        <div class="relative">
+          <div id="foundation-0" data-pile="f-0" data-suit="spades" class="card-slot foundation-slot"><span class="text-zinc-600 text-lg">♠</span></div>
+          <span class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-mono text-zinc-400">♠</span>
+        </div>
+        <!-- Hearts Foundation -->
+        <div class="relative">
+          <div id="foundation-1" data-pile="f-1" data-suit="hearts" class="card-slot foundation-slot"><span class="text-red-950/60 text-lg">♥</span></div>
+          <span class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-mono text-zinc-400">♥</span>
+        </div>
+        <!-- Clubs Foundation -->
+        <div class="relative">
+          <div id="foundation-2" data-pile="f-2" data-suit="clubs" class="card-slot foundation-slot"><span class="text-zinc-600 text-lg">♣</span></div>
+          <span class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-mono text-zinc-400">♣</span>
+        </div>
+        <!-- Diamonds Foundation -->
+        <div class="relative">
+          <div id="foundation-3" data-pile="f-3" data-suit="diamonds" class="card-slot foundation-slot"><span class="text-red-950/60 text-lg">♦</span></div>
+          <span class="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] font-mono text-zinc-400">♦</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau (7 Doubly Linked Lists) -->
+    <div id="tableauContainer" class="w-full flex-1 flex justify-between gap-1 md:gap-3 mt-4 pt-2 relative z-10">
+      <!-- 7 Tableau column slots -->
+      <div class="tableau-col flex-1 flex flex-col items-center relative" data-col="0">
+        <div class="card-slot tableau-base-slot" data-pile="t-0">
+          <span class="text-amber-400/20 text-xs font-serif font-bold">K</span>
+        </div>
+      <div class="solitaire-card face-up relative" id="card-S3" data-id="S3" data-col="0" data-row="0" style="position: absolute; top: 0px; z-index: 1;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">3</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♠
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">3</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      <div class="tableau-col flex-1 flex flex-col items-center relative" data-col="1">
+        <div class="card-slot tableau-base-slot" data-pile="t-1">
+          <span class="text-amber-400/20 text-xs font-serif font-bold">K</span>
+        </div>
+      <div class="solitaire-card face-down relative" id="card-S13" data-id="S13" data-col="1" data-row="0" style="position: absolute; top: 0px; z-index: 1;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">K</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                K
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">K</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-up relative" id="card-C6" data-id="C6" data-col="1" data-row="1" style="position: absolute; top: 16px; z-index: 2;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">6</span>
+                <span class="text-[10px] md:text-xs">♣</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♣
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">6</span>
+                <span class="text-[10px] md:text-xs">♣</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      <div class="tableau-col flex-1 flex flex-col items-center relative" data-col="2">
+        <div class="card-slot tableau-base-slot" data-pile="t-2">
+          <span class="text-amber-400/20 text-xs font-serif font-bold">K</span>
+        </div>
+      <div class="solitaire-card face-down relative" id="card-S1" data-id="S1" data-col="2" data-row="0" style="position: absolute; top: 0px; z-index: 1;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">A</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♠
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">A</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-S12" data-id="S12" data-col="2" data-row="1" style="position: absolute; top: 16px; z-index: 2;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">Q</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                Q
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">Q</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-up relative" id="card-S7" data-id="S7" data-col="2" data-row="2" style="position: absolute; top: 32px; z-index: 3;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">7</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♠
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">7</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      <div class="tableau-col flex-1 flex flex-col items-center relative" data-col="3">
+        <div class="card-slot tableau-base-slot" data-pile="t-3">
+          <span class="text-amber-400/20 text-xs font-serif font-bold">K</span>
+        </div>
+      <div class="solitaire-card face-down relative" id="card-D10" data-id="D10" data-col="3" data-row="0" style="position: absolute; top: 0px; z-index: 1;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">10</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♦
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">10</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-C2" data-id="C2" data-col="3" data-row="1" style="position: absolute; top: 16px; z-index: 2;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">2</span>
+                <span class="text-[10px] md:text-xs">♣</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♣
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">2</span>
+                <span class="text-[10px] md:text-xs">♣</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-H9" data-id="H9" data-col="3" data-row="2" style="position: absolute; top: 32px; z-index: 3;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">9</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♥
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">9</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-up relative" id="card-H13" data-id="H13" data-col="3" data-row="3" style="position: absolute; top: 48px; z-index: 4;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">K</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                K
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">K</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      <div class="tableau-col flex-1 flex flex-col items-center relative" data-col="4">
+        <div class="card-slot tableau-base-slot" data-pile="t-4">
+          <span class="text-amber-400/20 text-xs font-serif font-bold">K</span>
+        </div>
+      <div class="solitaire-card face-down relative" id="card-D2" data-id="D2" data-col="4" data-row="0" style="position: absolute; top: 0px; z-index: 1;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">2</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♦
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">2</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-S5" data-id="S5" data-col="4" data-row="1" style="position: absolute; top: 16px; z-index: 2;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">5</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♠
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">5</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-S11" data-id="S11" data-col="4" data-row="2" style="position: absolute; top: 32px; z-index: 3;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">J</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                J
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">J</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-S4" data-id="S4" data-col="4" data-row="3" style="position: absolute; top: 48px; z-index: 4;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">4</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♠
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">4</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-up relative" id="card-S10" data-id="S10" data-col="4" data-row="4" style="position: absolute; top: 64px; z-index: 5;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">10</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♠
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">10</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      <div class="tableau-col flex-1 flex flex-col items-center relative" data-col="5">
+        <div class="card-slot tableau-base-slot" data-pile="t-5">
+          <span class="text-amber-400/20 text-xs font-serif font-bold">K</span>
+        </div>
+      <div class="solitaire-card face-down relative" id="card-H5" data-id="H5" data-col="5" data-row="0" style="position: absolute; top: 0px; z-index: 1;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">5</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♥
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">5</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-S6" data-id="S6" data-col="5" data-row="1" style="position: absolute; top: 16px; z-index: 2;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">6</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♠
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">6</span>
+                <span class="text-[10px] md:text-xs">♠</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-C5" data-id="C5" data-col="5" data-row="2" style="position: absolute; top: 32px; z-index: 3;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">5</span>
+                <span class="text-[10px] md:text-xs">♣</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♣
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">5</span>
+                <span class="text-[10px] md:text-xs">♣</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-D4" data-id="D4" data-col="5" data-row="3" style="position: absolute; top: 48px; z-index: 4;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">4</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♦
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">4</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-H8" data-id="H8" data-col="5" data-row="4" style="position: absolute; top: 64px; z-index: 5;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">8</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♥
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">8</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-up relative" id="card-D6" data-id="D6" data-col="5" data-row="5" style="position: absolute; top: 80px; z-index: 6;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">6</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♦
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">6</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      <div class="tableau-col flex-1 flex flex-col items-center relative" data-col="6">
+        <div class="card-slot tableau-base-slot" data-pile="t-6">
+          <span class="text-amber-400/20 text-xs font-serif font-bold">K</span>
+        </div>
+      <div class="solitaire-card face-down relative" id="card-C12" data-id="C12" data-col="6" data-row="0" style="position: absolute; top: 0px; z-index: 1;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">Q</span>
+                <span class="text-[10px] md:text-xs">♣</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                Q
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">Q</span>
+                <span class="text-[10px] md:text-xs">♣</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-H6" data-id="H6" data-col="6" data-row="1" style="position: absolute; top: 16px; z-index: 2;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">6</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♥
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">6</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-D7" data-id="D7" data-col="6" data-row="2" style="position: absolute; top: 32px; z-index: 3;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">7</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♦
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">7</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-D5" data-id="D5" data-col="6" data-row="3" style="position: absolute; top: 48px; z-index: 4;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">5</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♦
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">5</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-C1" data-id="C1" data-col="6" data-row="4" style="position: absolute; top: 64px; z-index: 5;">
+          <div class="card-inner">
+            <div class="card-face card-front black-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">A</span>
+                <span class="text-[10px] md:text-xs">♣</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♣
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">A</span>
+                <span class="text-[10px] md:text-xs">♣</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-down relative" id="card-H3" data-id="H3" data-col="6" data-row="5" style="position: absolute; top: 80px; z-index: 6;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">3</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♥
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">3</span>
+                <span class="text-[10px] md:text-xs">♥</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div><div class="solitaire-card face-up relative" id="card-D3" data-id="D3" data-col="6" data-row="6" style="position: absolute; top: 96px; z-index: 7;">
+          <div class="card-inner">
+            <div class="card-face card-front red-suit">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">3</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ♦
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">3</span>
+                <span class="text-[10px] md:text-xs">♦</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+    </div>
+  </main>
+
+  <!-- REASON TOAST / FLOATING ANNOUNCEMENT -->
+  <div id="toastBox" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-opacity duration-200" style="opacity: 0;">
+    <div id="toastText" class="px-4 py-2 rounded-full bg-black/90 border border-amber-400/60 text-amber-300 text-xs font-mono shadow-2xl backdrop-blur-md">Theme: CASINO</div>
+  </div>
+
+  <!-- COLLAPSIBLE DATA STRUCTURE X-RAY PANEL (DRAWER) -->
+  <aside id="xrayDrawer" class="fixed top-0 right-0 h-full w-[340px] max-w-[90vw] z-50 bg-[#09110d]/95 text-zinc-300 border-l border-amber-500/30 backdrop-blur-xl shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out">
+    <!-- Header -->
+    <div class="p-3 border-b border-amber-500/20 flex items-center justify-between bg-black/40">
+      <div class="flex items-center gap-2">
+        <span class="text-amber-400 font-mono text-sm font-bold flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          DSA X-RAY INSPECTOR
+        </span>
+      </div>
+      <button id="btnCloseXray" class="text-zinc-400 hover:text-white p-1 rounded hover:bg-white/10">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+    <!-- Active tabs inside X-Ray -->
+    <div class="flex border-b border-white/10 text-xs font-mono">
+      <button class="xray-tab flex-1 py-2 text-center text-amber-300 border-b-2 border-amber-400 bg-amber-500/10" data-view="structures">Structures</button>
+      <button class="xray-tab flex-1 py-2 text-center text-zinc-400 hover:text-white" data-view="hashmap">HashMap</button>
+      <button class="xray-tab flex-1 py-2 text-center text-zinc-400 hover:text-white" data-view="ops">Big-O Log</button>
+    </div>
+
+    <!-- Content Sections -->
+    <div class="flex-1 overflow-y-auto custom-scroll p-3 text-xs font-mono space-y-4">
+      
+      <!-- Tab 1: Live Structures -->
+      <div id="viewStructures" class="space-y-4">
+        <!-- Stock Queue Visualizer -->
+        <div id="xrayQueueBox" class="p-2.5 rounded bg-black/40 border border-white/10 transition-colors">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-amber-300 font-bold">Stock: CustomQueue</span>
+            <span class="text-[10px] text-zinc-400">FIFO (dequeue O(1))</span>
+          </div>
+          <div class="text-[10px] text-zinc-400 mb-1">FRONT → BACK:</div>
+          <div id="xrayQueueStream" class="flex items-center gap-1 overflow-x-auto pb-1 text-[11px]">
+            <span class="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] text-amber-300 font-bold border-amber-400">
+              C4
+            </span>
+          
+            <span class="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] text-zinc-400">
+              H1
+            </span>
+          
+            <span class="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] text-zinc-400">
+              H7
+            </span>
+          
+            <span class="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] text-zinc-400">
+              H12
+            </span>
+          
+            <span class="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] text-zinc-400">
+              D12
+            </span>
+          
+            <span class="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] text-zinc-400">
+              D11
+            </span>
+          
+            <span class="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] text-zinc-400">
+              C13
+            </span>
+          
+            <span class="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] text-zinc-400">
+              C11
+            </span>
+          <span class="text-zinc-500">+16</span></div>
+        </div>
+
+        <!-- Waste & Foundation Stacks -->
+        <div id="xrayStackBox" class="p-2.5 rounded bg-black/40 border border-white/10">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-amber-300 font-bold">Stacks: CustomStack</span>
+            <span class="text-[10px] text-zinc-400">LIFO (push/pop O(1))</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-[10px]">
+            <div class="bg-black/30 p-1.5 rounded border border-white/5">
+              <span class="text-zinc-400">Waste Top:</span>
+              <div id="xrayWasteTop" class="font-bold text-white mt-0.5">∅ Empty</div>
+            </div>
+            <div class="bg-black/30 p-1.5 rounded border border-white/5">
+              <span class="text-zinc-400">Foundations Count:</span>
+              <div id="xrayFoundationsTotal" class="font-bold text-emerald-400 mt-0.5">0 / 52 cards</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tableau Doubly Linked Lists -->
+        <div id="xrayTableauBox" class="p-2.5 rounded bg-black/40 border border-white/10">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-amber-300 font-bold">Tableau: 7 DoublyLinkedLists</span>
+            <span class="text-[10px] text-zinc-400">split_from O(1)</span>
+          </div>
+          <div class="space-y-1.5 text-[10px] mt-2" id="xrayTableauList">
+            <div class="flex items-center justify-between bg-black/30 p-1.5 rounded border border-white/5">
+              <span class="text-amber-200">Col 1 (1)</span>
+              <div class="flex items-center gap-1 font-mono text-[9px]">
+                <span class="text-zinc-400">H:</span><b class="text-white">S3</b>
+                <span class="text-zinc-500">↔</span>
+                <span class="text-zinc-400">T:</span><b class="text-emerald-400">S3</b>
+              </div>
+            </div>
+          
+            <div class="flex items-center justify-between bg-black/30 p-1.5 rounded border border-white/5">
+              <span class="text-amber-200">Col 2 (2)</span>
+              <div class="flex items-center gap-1 font-mono text-[9px]">
+                <span class="text-zinc-400">H:</span><b class="text-white">S13</b>
+                <span class="text-zinc-500">↔</span>
+                <span class="text-zinc-400">T:</span><b class="text-emerald-400">C6</b>
+              </div>
+            </div>
+          
+            <div class="flex items-center justify-between bg-black/30 p-1.5 rounded border border-white/5">
+              <span class="text-amber-200">Col 3 (3)</span>
+              <div class="flex items-center gap-1 font-mono text-[9px]">
+                <span class="text-zinc-400">H:</span><b class="text-white">S1</b>
+                <span class="text-zinc-500">↔</span>
+                <span class="text-zinc-400">T:</span><b class="text-emerald-400">S7</b>
+              </div>
+            </div>
+          
+            <div class="flex items-center justify-between bg-black/30 p-1.5 rounded border border-white/5">
+              <span class="text-amber-200">Col 4 (4)</span>
+              <div class="flex items-center gap-1 font-mono text-[9px]">
+                <span class="text-zinc-400">H:</span><b class="text-white">D10</b>
+                <span class="text-zinc-500">↔</span>
+                <span class="text-zinc-400">T:</span><b class="text-emerald-400">H13</b>
+              </div>
+            </div>
+          
+            <div class="flex items-center justify-between bg-black/30 p-1.5 rounded border border-white/5">
+              <span class="text-amber-200">Col 5 (5)</span>
+              <div class="flex items-center gap-1 font-mono text-[9px]">
+                <span class="text-zinc-400">H:</span><b class="text-white">D2</b>
+                <span class="text-zinc-500">↔</span>
+                <span class="text-zinc-400">T:</span><b class="text-emerald-400">S10</b>
+              </div>
+            </div>
+          
+            <div class="flex items-center justify-between bg-black/30 p-1.5 rounded border border-white/5">
+              <span class="text-amber-200">Col 6 (6)</span>
+              <div class="flex items-center gap-1 font-mono text-[9px]">
+                <span class="text-zinc-400">H:</span><b class="text-white">H5</b>
+                <span class="text-zinc-500">↔</span>
+                <span class="text-zinc-400">T:</span><b class="text-emerald-400">D6</b>
+              </div>
+            </div>
+          
+            <div class="flex items-center justify-between bg-black/30 p-1.5 rounded border border-white/5">
+              <span class="text-amber-200">Col 7 (7)</span>
+              <div class="flex items-center gap-1 font-mono text-[9px]">
+                <span class="text-zinc-400">H:</span><b class="text-white">C12</b>
+                <span class="text-zinc-500">↔</span>
+                <span class="text-zinc-400">T:</span><b class="text-emerald-400">D3</b>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Stacks -->
+        <div class="p-2.5 rounded bg-black/40 border border-white/10 flex justify-between items-center">
+          <div>
+            <div class="text-zinc-400">Undo Stack Depth: <b id="xrayUndoCount" class="text-white">0</b></div>
+            <div class="text-zinc-400">Redo Stack Depth: <b id="xrayRedoCount" class="text-white">0</b></div>
+          </div>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30">LIFO State</span>
+        </div>
+      </div>
+
+      <!-- Tab 2: HashMap -->
+      <div id="viewHashMap" class="hidden space-y-2">
+        <div class="text-[11px] text-zinc-400 mb-2">
+          Mapping Card ID → <span class="text-amber-300">{ pile, index, faceUp }</span> in $O(1)$ average time.
+        </div>
+        <div class="overflow-x-auto max-h-[460px] custom-scroll border border-white/10 rounded">
+          <table class="w-full text-left border-collapse text-[10px]">
+            <thead class="bg-black/60 sticky top-0 text-amber-300">
+              <tr>
+                <th class="p-1.5 border-b border-white/10">Card</th>
+                <th class="p-1.5 border-b border-white/10">Pile</th>
+                <th class="p-1.5 border-b border-white/10">Idx</th>
+                <th class="p-1.5 border-b border-white/10">Face</th>
+              </tr>
+            </thead>
+            <tbody id="xrayHashMapBody" class="divide-y divide-white/5 font-mono">
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">C10</td>
+            <td class="p-1 text-zinc-300">stock</td>
+            <td class="p-1 text-zinc-400">14</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">C11</td>
+            <td class="p-1 text-zinc-300">stock</td>
+            <td class="p-1 text-zinc-400">7</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">C12</td>
+            <td class="p-1 text-zinc-300">t-6</td>
+            <td class="p-1 text-zinc-400">0</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">C13</td>
+            <td class="p-1 text-zinc-300">stock</td>
+            <td class="p-1 text-zinc-400">6</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S10</td>
+            <td class="p-1 text-zinc-300">t-4</td>
+            <td class="p-1 text-zinc-400">4</td>
+            <td class="p-1"><span class="text-emerald-400">UP</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S11</td>
+            <td class="p-1 text-zinc-300">t-4</td>
+            <td class="p-1 text-zinc-400">2</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S12</td>
+            <td class="p-1 text-zinc-300">t-2</td>
+            <td class="p-1 text-zinc-400">1</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S13</td>
+            <td class="p-1 text-zinc-300">t-1</td>
+            <td class="p-1 text-zinc-400">0</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S1</td>
+            <td class="p-1 text-zinc-300">t-2</td>
+            <td class="p-1 text-zinc-400">0</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S2</td>
+            <td class="p-1 text-zinc-300">stock</td>
+            <td class="p-1 text-zinc-400">21</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S3</td>
+            <td class="p-1 text-zinc-300">t-0</td>
+            <td class="p-1 text-zinc-400">0</td>
+            <td class="p-1"><span class="text-emerald-400">UP</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S4</td>
+            <td class="p-1 text-zinc-300">t-4</td>
+            <td class="p-1 text-zinc-400">3</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S5</td>
+            <td class="p-1 text-zinc-300">t-4</td>
+            <td class="p-1 text-zinc-400">1</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S6</td>
+            <td class="p-1 text-zinc-300">t-5</td>
+            <td class="p-1 text-zinc-400">1</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S7</td>
+            <td class="p-1 text-zinc-300">t-2</td>
+            <td class="p-1 text-zinc-400">2</td>
+            <td class="p-1"><span class="text-emerald-400">UP</span></td>
+          </tr>
+        
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold text-zinc-200">S8</td>
+            <td class="p-1 text-zinc-300">stock</td>
+            <td class="p-1 text-zinc-400">22</td>
+            <td class="p-1"><span class="text-zinc-600">DOWN</span></td>
+          </tr>
+        </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 3: Big-O Operations Log -->
+      <div id="viewOps" class="hidden space-y-1.5">
+        <div class="text-[11px] text-zinc-400 mb-1">Last engine state mutations:</div>
+        <div id="xrayOpsLog" class="space-y-1">
+          <div class="p-1.5 rounded bg-black/40 border border-white/5 flex items-center justify-between text-[10px]">
+            <div>
+              <span class="text-amber-400 font-bold">newGame()</span>
+              <span class="text-zinc-400 ml-1">Deck shuffled &amp; dealt (Seed #393814)</span>
+            </div>
+            <span class="px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px] border border-emerald-500/30">O(n)</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- WIN MODAL & VICTORY CANVAS -->
+  <canvas id="winCanvas"></canvas>
+  <div id="winModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+    <div class="w-full max-w-sm p-6 rounded-2xl bg-[#091b12] border border-amber-400/80 text-center shadow-2xl relative overflow-hidden">
+      <div class="absolute -top-12 -left-12 w-32 h-32 bg-amber-400/20 rounded-full blur-2xl"></div>
+      <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-emerald-400/20 rounded-full blur-2xl"></div>
+
+      <div class="text-amber-400 font-['Cinzel'] text-2xl font-bold mb-1 tracking-wider">CASINO VICTORY!</div>
+      <p class="text-xs text-zinc-300 mb-4">All 52 Cards Assembled onto Foundations</p>
+
+      <div class="grid grid-cols-3 gap-2 my-4 text-center font-mono">
+        <div class="p-2 rounded bg-black/40 border border-white/10">
+          <div class="text-[10px] text-zinc-400">SCORE</div>
+          <div id="winFinalScore" class="text-base font-bold text-amber-400">0</div>
+        </div>
+        <div class="p-2 rounded bg-black/40 border border-white/10">
+          <div class="text-[10px] text-zinc-400">TIME</div>
+          <div id="winFinalTime" class="text-base font-bold text-white">00:00</div>
+        </div>
+        <div class="p-2 rounded bg-black/40 border border-white/10">
+          <div class="text-[10px] text-zinc-400">MOVES</div>
+          <div id="winFinalMoves" class="text-base font-bold text-white">0</div>
+        </div>
+      </div>
+
+      <button id="btnWinRestart" class="w-full mt-2 py-2.5 rounded-lg bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-bold text-sm tracking-wide shadow-lg transition active:scale-95">
+        PLAY AGAIN
+      </button>
+    </div>
+  </div>
+
+  <!-- SCRIPT ARCHITECTURE: ENGINE + SOUND + UI -->
+  <script>
+    /* ==========================================================================
+       1. HAND-WRITTEN DATA STRUCTURES (NO BUILT-IN STACK/QUEUE USED)
+       ========================================================================== */
+
+    /** Linked Node for Stack and Queue */
+    class Node {
+      constructor(value) {
+        this.value = value;
+        this.next = null;
+      }
+    }
+
+    /** Doubly Linked Node for Tableau runs */
+    class DLNode {
+      constructor(card) {
+        this.card = card; // { id, suit, rank, color, faceUp }
+        this.prev = null;
+        this.next = null;
+      }
+    }
+
+    /** Custom Stack ADT: push, pop, peek, size, toArray */
+    class CustomStack {
+      constructor() {
+        this.top = null;
+        this._size = 0;
+      }
+      push(value) {
+        const node = new Node(value);
+        node.next = this.top;
+        this.top = node;
+        this._size++;
+      }
+      pop() {
+        if (!this.top) return null;
+        const val = this.top.value;
+        this.top = this.top.next;
+        this._size--;
+        return val;
+      }
+      peek() {
+        return this.top ? this.top.value : null;
+      }
+      isEmpty() {
+        return this._size === 0;
+      }
+      size() {
+        return this._size;
+      }
+      toArray() {
+        const arr = [];
+        let curr = this.top;
+        while (curr) {
+          arr.push(curr.value);
+          curr = curr.next;
+        }
+        return arr; // top is at index 0
+      }
+      clear() {
+        this.top = null;
+        this._size = 0;
+      }
+    }
+
+    /** Custom Queue ADT: enqueue, dequeue, peek, size, toArray */
+    class CustomQueue {
+      constructor() {
+        this.head = null;
+        this.tail = null;
+        this._size = 0;
+      }
+      enqueue(value) {
+        const node = new Node(value);
+        if (!this.tail) {
+          this.head = this.tail = node;
+        } else {
+          this.tail.next = node;
+          this.tail = node;
+        }
+        this._size++;
+      }
+      dequeue() {
+        if (!this.head) return null;
+        const val = this.head.value;
+        this.head = this.head.next;
+        if (!this.head) this.tail = null;
+        this._size--;
+        return val;
+      }
+      peek() {
+        return this.head ? this.head.value : null;
+      }
+      isEmpty() {
+        return this._size === 0;
+      }
+      size() {
+        return this._size;
+      }
+      toArray() {
+        const arr = [];
+        let curr = this.head;
+        while (curr) {
+          arr.push(curr.value);
+          curr = curr.next;
+        }
+        return arr;
+      }
+      clear() {
+        this.head = this.tail = null;
+        this._size = 0;
+      }
+    }
+
+    /** Custom Doubly Linked List for Tableau Piles */
+    class CustomDoublyLinkedList {
+      constructor() {
+        this.head = null; // bottom card
+        this.tail = null; // top playable card
+        this._size = 0;
+      }
+      append(card) {
+        const node = new DLNode(card);
+        if (!this.head) {
+          this.head = this.tail = node;
+        } else {
+          this.tail.next = node;
+          node.prev = this.tail;
+          this.tail = node;
+        }
+        this._size++;
+        return node;
+      }
+      findNode(predicate) {
+        let curr = this.head;
+        while (curr) {
+          if (predicate(curr.card)) return curr;
+          curr = curr.next;
+        }
+        return null;
+      }
+      /** Split list from given node onward. Returns a new DLList of the detached run */
+      split_from(node) {
+        if (!node) return null;
+        const detached = new CustomDoublyLinkedList();
+        detached.head = node;
+        detached.tail = this.tail;
+
+        // count detached elements
+        let count = 0;
+        let curr = node;
+        while (curr) {
+          count++;
+          curr = curr.next;
+        }
+        detached._size = count;
+
+        if (node === this.head) {
+          this.head = null;
+          this.tail = null;
+          this._size = 0;
+        } else {
+          this.tail = node.prev;
+          this.tail.next = null;
+          node.prev = null;
+          this._size -= count;
+        }
+        return detached;
+      }
+      /** Attach an entire sub-run DLList to the tail in O(1) */
+      attach(runList) {
+        if (!runList || runList.isEmpty()) return;
+        if (!this.head) {
+          this.head = runList.head;
+          this.tail = runList.tail;
+          this._size = runList._size;
+        } else {
+          this.tail.next = runList.head;
+          runList.head.prev = this.tail;
+          this.tail = runList.tail;
+          this._size += runList._size;
+        }
+      }
+      removeTail() {
+        if (!this.tail) return null;
+        const removed = this.tail.card;
+        if (this.head === this.tail) {
+          this.head = this.tail = null;
+        } else {
+          this.tail = this.tail.prev;
+          this.tail.next = null;
+        }
+        this._size--;
+        return removed;
+      }
+      size() {
+        return this._size;
+      }
+      isEmpty() {
+        return this._size === 0;
+      }
+      toArray() {
+        const arr = [];
+        let curr = this.head;
+        while (curr) {
+          arr.push(curr.card);
+          curr = curr.next;
+        }
+        return arr;
+      }
+      clear() {
+        this.head = this.tail = null;
+        this._size = 0;
+      }
+    }
+
+    /** Custom HashMap with separate chaining for Card Index: cardId -> { pile, index, faceUp } */
+    class CustomHashMap {
+      constructor(capacity = 64) {
+        this.capacity = capacity;
+        this.buckets = new Array(capacity).fill(null).map(() => []);
+        this._size = 0;
+      }
+      _hash(key) {
+        let hash = 0;
+        for (let i = 0; i < key.length; i++) {
+          hash = (hash * 31 + key.charCodeAt(i)) % this.capacity;
+        }
+        return hash;
+      }
+      put(key, value) {
+        const idx = this._hash(key);
+        const bucket = this.buckets[idx];
+        for (let i = 0; i < bucket.length; i++) {
+          if (bucket[i].key === key) {
+            bucket[i].value = value;
+            return;
+          }
+        }
+        bucket.push({ key, value });
+        this._size++;
+      }
+      get(key) {
+        const idx = this._hash(key);
+        const bucket = this.buckets[idx];
+        for (let entry of bucket) {
+          if (entry.key === key) return entry.value;
+        }
+        return null;
+      }
+      remove(key) {
+        const idx = this._hash(key);
+        const bucket = this.buckets[idx];
+        for (let i = 0; i < bucket.length; i++) {
+          if (bucket[i].key === key) {
+            bucket.splice(i, 1);
+            this._size--;
+            return true;
+          }
+        }
+        return false;
+      }
+      entries() {
+        const all = [];
+        for (let b of this.buckets) {
+          for (let e of b) {
+            all.push(e);
+          }
+        }
+        return all;
+      }
+      clear() {
+        this.buckets = new Array(this.capacity).fill(null).map(() => []);
+        this._size = 0;
+      }
+    }
+
+    /* ==========================================================================
+       2. SEEDABLE PRNG (Mulberry32)
+       ========================================================================== */
+    class SeededRNG {
+      constructor(seed = Math.floor(Math.random() * 1000000)) {
+        this.seed = seed;
+        this._s = seed;
+      }
+      next() {
+        let t = this._s += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      }
+    }
+
+    /* ==========================================================================
+       3. KLONDIKE SOLITAIRE GAME ENGINE
+       ========================================================================== */
+    const SUITS = ['spades', 'hearts', 'clubs', 'diamonds'];
+    const RANKS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]; // 1: Ace, 11: J, 12: Q, 13: K
+
+    class SolitaireEngine {
+      constructor() {
+        this.seed = 123456;
+        this.rng = new SeededRNG(this.seed);
+        this.drawMode = 1; // 1 or 3
+        this.score = 0;
+        this.moves = 0;
+
+        // Custom DSA Store
+        this.stock = new CustomQueue();
+        this.waste = new CustomStack();
+        this.foundations = [
+          new CustomStack(), // 0: Spades
+          new CustomStack(), // 1: Hearts
+          new CustomStack(), // 2: Clubs
+          new CustomStack()  // 3: Diamonds
+        ];
+        this.tableau = [
+          new CustomDoublyLinkedList(),
+          new CustomDoublyLinkedList(),
+          new CustomDoublyLinkedList(),
+          new CustomDoublyLinkedList(),
+          new CustomDoublyLinkedList(),
+          new CustomDoublyLinkedList(),
+          new CustomDoublyLinkedList()
+        ];
+        this.undoStack = new CustomStack();
+        this.redoStack = new CustomStack();
+        this.cardMap = new CustomHashMap(128);
+      }
+
+      newGame(seed = Math.floor(Math.random() * 900000) + 100000, drawMode = 1) {
+        this.seed = seed;
+        this.rng = new SeededRNG(seed);
+        this.drawMode = drawMode;
+        this.score = 0;
+        this.moves = 0;
+
+        // Reset structures
+        this.stock.clear();
+        this.waste.clear();
+        this.foundations.forEach(f => f.clear());
+        this.tableau.forEach(t => t.clear());
+        this.undoStack.clear();
+        this.redoStack.clear();
+        this.cardMap.clear();
+
+        // 1. Create 52 unique cards
+        const deck = [];
+        SUITS.forEach((suit, sIdx) => {
+          RANKS.forEach(rank => {
+            const color = (suit === 'hearts' || suit === 'diamonds') ? 'red' : 'black';
+            const card = {
+              id: `${suit[0].toUpperCase()}${rank}`,
+              suit,
+              rank,
+              color,
+              faceUp: false
+            };
+            deck.push(card);
+          });
+        });
+
+        // 2. Fisher-Yates Shuffle using seedable PRNG
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(this.rng.next() * (i + 1));
+          const temp = deck[i];
+          deck[i] = deck[j];
+          deck[j] = temp;
+        }
+
+        let deckIdx = 0;
+        const events = [];
+
+        // 3. Deal to 7 Tableau columns
+        for (let col = 0; col < 7; col++) {
+          for (let row = 0; row <= col; row++) {
+            const card = deck[deckIdx++];
+            // top card of each column is face up
+            card.faceUp = (row === col);
+            this.tableau[col].append(card);
+            events.push({ type: 'deal', card, col, row, faceUp: card.faceUp });
+          }
+        }
+
+        // 4. Remaining 24 cards into Stock Queue
+        while (deckIdx < deck.length) {
+          const card = deck[deckIdx++];
+          card.faceUp = false;
+          this.stock.enqueue(card);
+        }
+
+        this.syncCardMap();
+        return { ok: true, reason: 'Game Initialized', events };
+      }
+
+      /** Synchronizes the HashMap cardId -> { pile, index, faceUp } in O(52) = O(1) */
+      syncCardMap() {
+        // Stock
+        const stockArr = this.stock.toArray();
+        stockArr.forEach((c, idx) => {
+          this.cardMap.put(c.id, { pile: 'stock', index: idx, faceUp: c.faceUp });
+        });
+
+        // Waste
+        const wasteArr = this.waste.toArray();
+        wasteArr.forEach((c, idx) => {
+          this.cardMap.put(c.id, { pile: 'waste', index: idx, faceUp: c.faceUp });
+        });
+
+        // Foundations
+        this.foundations.forEach((f, fIdx) => {
+          const arr = f.toArray();
+          arr.forEach((c, idx) => {
+            this.cardMap.put(c.id, { pile: `f-${fIdx}`, index: idx, faceUp: c.faceUp });
+          });
+        });
+
+        // Tableau
+        this.tableau.forEach((t, tIdx) => {
+          let curr = t.head;
+          let idx = 0;
+          while (curr) {
+            this.cardMap.put(curr.card.id, { pile: `t-${tIdx}`, index: idx++, faceUp: curr.card.faceUp });
+            curr = curr.next;
+          }
+        });
+      }
+
+      draw() {
+        const events = [];
+        if (this.stock.isEmpty()) {
+          // Recycle Waste into Stock
+          if (this.waste.isEmpty()) {
+            return { ok: false, reason: 'No cards in Stock or Waste', events: [] };
+          }
+
+          // Undo record for Recycle
+          const wasteCards = [];
+          while (!this.waste.isEmpty()) {
+            const c = this.waste.pop();
+            c.faceUp = false;
+            wasteCards.push(c);
+          }
+          // Stock recycles in exact original queue order
+          // Since waste was popped (reversed), reversing back gives original draw order
+          for (let i = wasteCards.length - 1; i >= 0; i--) {
+            this.stock.enqueue(wasteCards[i]);
+          }
+
+          if (this.drawMode === 1) {
+            this.score = Math.max(0, this.score - 100);
+          }
+
+          this.moves++;
+          this.undoStack.push({
+            type: 'recycle',
+            count: wasteCards.length
+          });
+          this.redoStack.clear();
+          this.syncCardMap();
+          return { ok: true, reason: 'Recycled Waste to Stock', events: [{ type: 'recycle', count: wasteCards.length }] };
+        }
+
+        // Draw 1 or Draw 3
+        const countToDraw = Math.min(this.drawMode, this.stock.size());
+        const drawn = [];
+        for (let i = 0; i < countToDraw; i++) {
+          const card = this.stock.dequeue();
+          card.faceUp = true;
+          this.waste.push(card);
+          drawn.push(card);
+          events.push({ type: 'dequeue', card });
+        }
+
+        this.moves++;
+        this.undoStack.push({
+          type: 'draw',
+          cards: drawn
+        });
+        this.redoStack.clear();
+        this.syncCardMap();
+        return { ok: true, reason: `Drew ${countToDraw} card(s)`, events };
+      }
+
+      /** Auto-move / double-click card to foundation */
+      moveToFoundation(cardId) {
+        const meta = this.cardMap.get(cardId);
+        if (!meta) return { ok: false, reason: 'Card not found', events: [] };
+
+        let card = null;
+        let srcPile = meta.pile;
+        let exposedFlip = null;
+
+        // Check source
+        if (srcPile === 'waste') {
+          if (this.waste.peek()?.id !== cardId) {
+            return { ok: false, reason: 'Can only play top of Waste', events: [] };
+          }
+          card = this.waste.peek();
+        } else if (srcPile.startsWith('t-')) {
+          const colIdx = parseInt(srcPile.split('-')[1]);
+          const tab = this.tableau[colIdx];
+          if (tab.tail?.card.id !== cardId) {
+            return { ok: false, reason: 'Can only move the top card to Foundation', events: [] };
+          }
+          card = tab.tail.card;
+        } else {
+          return { ok: false, reason: 'Card already in Foundation', events: [] };
+        }
+
+        // Target Foundation index (0: Spades, 1: Hearts, 2: Clubs, 3: Diamonds)
+        const fIdx = SUITS.indexOf(card.suit);
+        const fStack = this.foundations[fIdx];
+        const topF = fStack.peek();
+
+        // Legal check: Ace on empty, or same suit rank+1
+        const isLegal = (!topF && card.rank === 1) || (topF && topF.suit === card.suit && card.rank === topF.rank + 1);
+        if (!isLegal) {
+          return { ok: false, reason: `Cannot place ${card.id} on Foundation`, events: [] };
+        }
+
+        // Execute Move
+        if (srcPile === 'waste') {
+          this.waste.pop();
+        } else {
+          const colIdx = parseInt(srcPile.split('-')[1]);
+          const tab = this.tableau[colIdx];
+          tab.removeTail();
+          // Auto flip exposed
+          if (tab.tail && !tab.tail.card.faceUp) {
+            tab.tail.card.faceUp = true;
+            exposedFlip = { col: colIdx, cardId: tab.tail.card.id };
+            this.score += 5;
+          }
+        }
+
+        fStack.push(card);
+        this.score += 10;
+        this.moves++;
+
+        const moveRecord = {
+          type: 'to_foundation',
+          card,
+          srcPile,
+          dstPile: `f-${fIdx}`,
+          exposedFlip
+        };
+        this.undoStack.push(moveRecord);
+        this.redoStack.clear();
+        this.syncCardMap();
+
+        return {
+          ok: true,
+          reason: `Moved ${card.id} to Foundation`,
+          events: [{ type: 'foundation', card, fIdx, exposedFlip }]
+        };
+      }
+
+      /** Drag and drop move: tableau->tableau, waste->tableau, foundation->tableau */
+      move(cardId, dstPile) {
+        const meta = this.cardMap.get(cardId);
+        if (!meta) return { ok: false, reason: 'Card not found', events: [] };
+
+        const srcPile = meta.pile;
+        if (srcPile === dstPile) return { ok: false, reason: 'Source and destination are identical', events: [] };
+
+        // Destination analysis
+        if (dstPile.startsWith('f-')) {
+          // Send to foundation
+          return this.moveToFoundation(cardId);
+        }
+
+        if (!dstPile.startsWith('t-')) {
+          return { ok: false, reason: 'Invalid destination pile', events: [] };
+        }
+
+        const dstCol = parseInt(dstPile.split('-')[1]);
+        const dstTab = this.tableau[dstCol];
+        const dstTopCard = dstTab.tail ? dstTab.tail.card : null;
+
+        // 1. Move from Waste to Tableau
+        if (srcPile === 'waste') {
+          const card = this.waste.peek();
+          if (card.id !== cardId) {
+            return { ok: false, reason: 'Only the top Waste card can be moved', events: [] };
+          }
+
+          // Rule check
+          if (!this.isValidTableauPlacement(card, dstTopCard)) {
+            return { ok: false, reason: this.getPlacementError(card, dstTopCard), events: [] };
+          }
+
+          this.waste.pop();
+          dstTab.append(card);
+          this.score += 5;
+          this.moves++;
+
+          this.undoStack.push({
+            type: 'waste_to_tableau',
+            card,
+            dstCol
+          });
+          this.redoStack.clear();
+          this.syncCardMap();
+          return { ok: true, reason: `Moved ${card.id} to Tableau ${dstCol + 1}`, events: [{ type: 'attach', card, dstCol }] };
+        }
+
+        // 2. Move from Foundation to Tableau
+        if (srcPile.startsWith('f-')) {
+          const fIdx = parseInt(srcPile.split('-')[1]);
+          const fStack = this.foundations[fIdx];
+          const card = fStack.peek();
+          if (!card || card.id !== cardId) {
+            return { ok: false, reason: 'Only top Foundation card can be moved', events: [] };
+          }
+
+          if (!this.isValidTableauPlacement(card, dstTopCard)) {
+            return { ok: false, reason: this.getPlacementError(card, dstTopCard), events: [] };
+          }
+
+          fStack.pop();
+          dstTab.append(card);
+          this.score = Math.max(0, this.score - 15);
+          this.moves++;
+
+          this.undoStack.push({
+            type: 'foundation_to_tableau',
+            card,
+            fIdx,
+            dstCol
+          });
+          this.redoStack.clear();
+          this.syncCardMap();
+          return { ok: true, reason: `Moved ${card.id} from Foundation to Tableau`, events: [{ type: 'attach', card, dstCol }] };
+        }
+
+        // 3. Move from Tableau to Tableau (split_from and attach in O(1))
+        if (srcPile.startsWith('t-')) {
+          const srcCol = parseInt(srcPile.split('-')[1]);
+          const srcTab = this.tableau[srcCol];
+
+          const targetNode = srcTab.findNode(c => c.id === cardId);
+          if (!targetNode || !targetNode.card.faceUp) {
+            return { ok: false, reason: 'Cannot move a face-down card', events: [] };
+          }
+
+          if (!this.isValidTableauPlacement(targetNode.card, dstTopCard)) {
+            return { ok: false, reason: this.getPlacementError(targetNode.card, dstTopCard), events: [] };
+          }
+
+          // Split run from node in O(1)
+          const runList = srcTab.split_from(targetNode);
+
+          // Check if newly exposed card needs to be flipped faceUp
+          let exposedFlip = null;
+          if (srcTab.tail && !srcTab.tail.card.faceUp) {
+            srcTab.tail.card.faceUp = true;
+            exposedFlip = { col: srcCol, cardId: srcTab.tail.card.id };
+            this.score += 5;
+          }
+
+          // Attach run to destination in O(1)
+          dstTab.attach(runList);
+          this.moves++;
+
+          this.undoStack.push({
+            type: 'tableau_to_tableau',
+            cardId,
+            srcCol,
+            dstCol,
+            exposedFlip,
+            runSize: runList.size()
+          });
+          this.redoStack.clear();
+          this.syncCardMap();
+
+          return {
+            ok: true,
+            reason: `Moved run of ${runList.size()} card(s) to Column ${dstCol + 1}`,
+            events: [{ type: 'split_attach', srcCol, dstCol, runSize: runList.size(), exposedFlip }]
+          };
+        }
+
+        return { ok: false, reason: 'Unsupported move combination', events: [] };
+      }
+
+      isValidTableauPlacement(card, topCard) {
+        if (!topCard) {
+          // Empty column requires King (Rank 13)
+          return card.rank === 13;
+        }
+        // Alternating color and descending rank
+        return card.color !== topCard.color && card.rank === topCard.rank - 1;
+      }
+
+      getPlacementError(card, topCard) {
+        if (!topCard) return 'Only a King can be placed on an empty column';
+        if (card.color === topCard.color) return `Requires alternating color (${card.color === 'red' ? 'Black' : 'Red'} on ${topCard.color})`;
+        if (card.rank !== topCard.rank - 1) return `Requires descending rank (needs ${this.getRankName(topCard.rank - 1)})`;
+        return 'Illegal move';
+      }
+
+      getRankName(rank) {
+        if (rank === 1) return 'Ace';
+        if (rank === 11) return 'Jack';
+        if (rank === 12) return 'Queen';
+        if (rank === 13) return 'King';
+        return `${rank}`;
+      }
+
+      undo() {
+        if (this.undoStack.isEmpty()) {
+          return { ok: false, reason: 'Nothing to undo', events: [] };
+        }
+
+        const record = this.undoStack.pop();
+        const events = [];
+
+        if (record.type === 'draw') {
+          // Pop cards from waste and put back to stock front
+          const cards = record.cards;
+          for (let i = cards.length - 1; i >= 0; i--) {
+            const c = this.waste.pop();
+            c.faceUp = false;
+            // Prepend to stock queue head
+            const node = new Node(c);
+            node.next = this.stock.head;
+            this.stock.head = node;
+            if (!this.stock.tail) this.stock.tail = node;
+            this.stock._size++;
+          }
+          this.moves--;
+        } else if (record.type === 'recycle') {
+          // Move from stock back to waste
+          for (let i = 0; i < record.count; i++) {
+            const c = this.stock.dequeue();
+            c.faceUp = true;
+            this.waste.push(c);
+          }
+          this.moves--;
+        } else if (record.type === 'to_foundation') {
+          const fIdx = parseInt(record.dstPile.split('-')[1]);
+          const card = this.foundations[fIdx].pop();
+
+          if (record.exposedFlip) {
+            const col = record.exposedFlip.col;
+            if (this.tableau[col].tail) {
+              this.tableau[col].tail.card.faceUp = false;
+              this.score = Math.max(0, this.score - 5);
+            }
+          }
+
+          if (record.srcPile === 'waste') {
+            this.waste.push(card);
+          } else {
+            const srcCol = parseInt(record.srcPile.split('-')[1]);
+            this.tableau[srcCol].append(card);
+          }
+          this.score = Math.max(0, this.score - 10);
+          this.moves--;
+        } else if (record.type === 'waste_to_tableau') {
+          const card = this.tableau[record.dstCol].removeTail();
+          this.waste.push(card);
+          this.score = Math.max(0, this.score - 5);
+          this.moves--;
+        } else if (record.type === 'foundation_to_tableau') {
+          const card = this.tableau[record.dstCol].removeTail();
+          this.foundations[record.fIdx].push(card);
+          this.score += 15;
+          this.moves--;
+        } else if (record.type === 'tableau_to_tableau') {
+          const dstTab = this.tableau[record.dstCol];
+          const srcTab = this.tableau[record.srcCol];
+
+          // Un-flip previously exposed card
+          if (record.exposedFlip) {
+            if (srcTab.tail) {
+              srcTab.tail.card.faceUp = false;
+              this.score = Math.max(0, this.score - 5);
+            }
+          }
+
+          // Split run back from dstTab
+          const targetNode = dstTab.findNode(c => c.id === record.cardId);
+          const run = dstTab.split_from(targetNode);
+          srcTab.attach(run);
+          this.moves--;
+        }
+
+        this.redoStack.push(record);
+        this.syncCardMap();
+        return { ok: true, reason: 'Undo executed', events: [{ type: 'undo' }] };
+      }
+
+      redo() {
+        if (this.redoStack.isEmpty()) {
+          return { ok: false, reason: 'Nothing to redo', events: [] };
+        }
+        const record = this.redoStack.pop();
+
+        if (record.type === 'draw') {
+          for (let c of record.cards) {
+            const card = this.stock.dequeue();
+            card.faceUp = true;
+            this.waste.push(card);
+          }
+          this.moves++;
+        } else if (record.type === 'recycle') {
+          while (!this.waste.isEmpty()) {
+            const c = this.waste.pop();
+            c.faceUp = false;
+            this.stock.enqueue(c);
+          }
+          this.moves++;
+        } else if (record.type === 'to_foundation') {
+          this.moveToFoundation(record.card.id);
+        } else if (record.type === 'waste_to_tableau') {
+          this.move(record.card.id, `t-${record.dstCol}`);
+        } else if (record.type === 'tableau_to_tableau') {
+          this.move(record.cardId, `t-${record.dstCol}`);
+        }
+
+        this.syncCardMap();
+        return { ok: true, reason: 'Redo executed', events: [{ type: 'redo' }] };
+      }
+
+      hint() {
+        // 1. Check Waste to Foundation
+        const topWaste = this.waste.peek();
+        if (topWaste) {
+          const fIdx = SUITS.indexOf(topWaste.suit);
+          const topF = this.foundations[fIdx].peek();
+          if ((!topF && topWaste.rank === 1) || (topF && topWaste.rank === topF.rank + 1)) {
+            return {
+              src: topWaste.id,
+              dst: `foundation-${fIdx}`,
+              reason: `Move ${topWaste.id} to Foundation`
+            };
+          }
+        }
+
+        // 2. Check Tableau to Foundation
+        for (let col = 0; col < 7; col++) {
+          const tab = this.tableau[col];
+          if (tab.tail && tab.tail.card.faceUp) {
+            const card = tab.tail.card;
+            const fIdx = SUITS.indexOf(card.suit);
+            const topF = this.foundations[fIdx].peek();
+            if ((!topF && card.rank === 1) || (topF && card.rank === topF.rank + 1)) {
+              return {
+                src: card.id,
+                dst: `foundation-${fIdx}`,
+                reason: `Move ${card.id} to Foundation`
+              };
+            }
+          }
+        }
+
+        // 3. Check Tableau to Tableau (prioritize revealing face-down cards)
+        for (let col = 0; col < 7; col++) {
+          const tab = this.tableau[col];
+          let curr = tab.head;
+          while (curr) {
+            if (curr.card.faceUp) {
+              const card = curr.card;
+              // Can this move to another column?
+              for (let targetCol = 0; targetCol < 7; targetCol++) {
+                if (targetCol === col) continue;
+                const targetTab = this.tableau[targetCol];
+                const targetTop = targetTab.tail ? targetTab.tail.card : null;
+
+                if (this.isValidTableauPlacement(card, targetTop)) {
+                  // Don't move a King from one empty pile to another empty pile
+                  if (card.rank === 13 && curr === tab.head && !targetTop) continue;
+                  return {
+                    src: card.id,
+                    dst: `t-${targetCol}`,
+                    reason: `Move run starting with ${card.id} to Column ${targetCol + 1}`
+                  };
+                }
+              }
+            }
+            curr = curr.next;
+          }
+        }
+
+        // 4. Waste to Tableau
+        if (topWaste) {
+          for (let targetCol = 0; targetCol < 7; targetCol++) {
+            const targetTab = this.tableau[targetCol];
+            const targetTop = targetTab.tail ? targetTab.tail.card : null;
+            if (this.isValidTableauPlacement(topWaste, targetTop)) {
+              return {
+                src: topWaste.id,
+                dst: `t-${targetCol}`,
+                reason: `Move ${topWaste.id} from Waste to Column ${targetCol + 1}`
+              };
+            }
+          }
+        }
+
+        // 5. Stock Draw
+        if (!this.stock.isEmpty()) {
+          return {
+            src: 'stockSlot',
+            dst: 'stockSlot',
+            reason: 'Draw card from Stock'
+          };
+        }
+
+        return null;
+      }
+
+      isWon() {
+        let total = 0;
+        this.foundations.forEach(f => total += f.size());
+        return total === 52;
+      }
+    }
+
+    /* ==========================================================================
+       4. SYNTHESIZED WEB AUDIO (ZERO EXTERNAL ASSETS)
+       ========================================================================== */
+    class SoundFX {
+      constructor() {
+        this.ctx = null;
+        this.muted = true; // off by default as requested
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playSlide() {
+        if (this.muted) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(140, this.ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      playFlip() {
+        if (this.muted) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(450, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(620, this.ctx.currentTime + 0.03);
+        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.06);
+      }
+      playFoundation() {
+        if (this.muted) return;
+        this.init();
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.04);
+          gain.gain.setValueAtTime(0.1, this.ctx.currentTime + idx * 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.04 + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + idx * 0.04);
+          osc.stop(this.ctx.currentTime + idx * 0.04 + 0.2);
+        });
+      }
+      playThud() {
+        if (this.muted) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(110, this.ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(60, this.ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.12);
+      }
+      playWinFanfare() {
+        if (this.muted) return;
+        this.init();
+        const fanfare = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        fanfare.forEach((f, i) => {
+          setTimeout(() => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = f;
+            gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + 0.35);
+          }, i * 110);
+        });
+      }
+    }
+
+    /* ==========================================================================
+       5. FRONTEND UI & INTERACTION CONTROLLER
+       ========================================================================== */
+    class SolitaireUI {
+      constructor() {
+        this.engine = new SolitaireEngine();
+        this.sound = new SoundFX();
+        this.timerInterval = null;
+        this.secondsElapsed = 0;
+        this.themeIdx = 0;
+        this.themes = ['neon', 'casino', 'paper'];
+
+        // Dragging state
+        this.dragState = null;
+        this.opsHistory = [];
+
+        this.initDOMElements();
+        this.attachEventListeners();
+        this.applyTheme(localStorage.getItem('solitaire_theme') || 'neon');
+
+        // Start new game
+        this.startNewGame();
+      }
+
+      initDOMElements() {
+        this.el = {
+          stockSlot: document.getElementById('stockSlot'),
+          stockBadge: document.getElementById('stockBadge'),
+          wasteSlot: document.getElementById('wasteSlot'),
+          tableauContainer: document.getElementById('tableauContainer'),
+          hudScore: document.getElementById('hudScore'),
+          hudMoves: document.getElementById('hudMoves'),
+          hudTimer: document.getElementById('hudTimer'),
+          hudScoreMobile: document.getElementById('hudScoreMobile'),
+          hudTimerMobile: document.getElementById('hudTimerMobile'),
+          currentSeedDisplay: document.getElementById('currentSeedDisplay'),
+          drawModeLabel: document.getElementById('drawModeLabel'),
+          toastBox: document.getElementById('toastBox'),
+          toastText: document.getElementById('toastText'),
+          xrayDrawer: document.getElementById('xrayDrawer'),
+          btnXRay: document.getElementById('btnXRay'),
+          btnCloseXray: document.getElementById('btnCloseXray'),
+          xrayQueueStream: document.getElementById('xrayQueueStream'),
+          xrayWasteTop: document.getElementById('xrayWasteTop'),
+          xrayFoundationsTotal: document.getElementById('xrayFoundationsTotal'),
+          xrayTableauList: document.getElementById('xrayTableauList'),
+          xrayUndoCount: document.getElementById('xrayUndoCount'),
+          xrayRedoCount: document.getElementById('xrayRedoCount'),
+          xrayHashMapBody: document.getElementById('xrayHashMapBody'),
+          xrayOpsLog: document.getElementById('xrayOpsLog'),
+          winModal: document.getElementById('winModal'),
+          winCanvas: document.getElementById('winCanvas'),
+          soundIconOn: document.getElementById('soundIconOn'),
+          soundIconOff: document.getElementById('soundIconOff')
+        };
+      }
+
+      startNewGame(customSeed = null) {
+        clearInterval(this.timerInterval);
+        this.secondsElapsed = 0;
+        this.updateTimerDisplay();
+
+        const seed = customSeed || Math.floor(Math.random() * 900000) + 100000;
+        const res = this.engine.newGame(seed, this.engine.drawMode);
+
+        this.el.currentSeedDisplay.textContent = seed;
+        this.el.drawModeLabel.textContent = this.engine.drawMode;
+
+        this.logOp('newGame()', `Deck shuffled & dealt (Seed #${seed})`, 'O(n)');
+        this.sound.playSlide();
+
+        this.renderAll();
+        this.startTimer();
+        this.closeWinModal();
+      }
+
+      startTimer() {
+        this.timerInterval = setInterval(() => {
+          this.secondsElapsed++;
+          this.updateTimerDisplay();
+        }, 1000);
+      }
+
+      updateTimerDisplay() {
+        const m = Math.floor(this.secondsElapsed / 60).toString().padStart(2, '0');
+        const s = (this.secondsElapsed % 60).toString().padStart(2, '0');
+        const str = `${m}:${s}`;
+        this.el.hudTimer.textContent = str;
+        this.el.hudTimerMobile.textContent = str;
+      }
+
+      renderAll() {
+        this.renderStock();
+        this.renderWaste();
+        this.renderFoundations();
+        this.renderTableau();
+        this.updateHUD();
+        this.updateXRay();
+      }
+
+      updateHUD() {
+        this.el.hudScore.textContent = this.engine.score;
+        this.el.hudMoves.textContent = this.engine.moves;
+        this.el.hudScoreMobile.textContent = this.engine.score;
+      }
+
+      showToast(msg) {
+        this.el.toastText.textContent = msg;
+        this.el.toastBox.style.opacity = '1';
+        clearTimeout(this.toastTimeout);
+        this.toastTimeout = setTimeout(() => {
+          this.el.toastBox.style.opacity = '0';
+        }, 2200);
+      }
+
+      logOp(method, details, bigO) {
+        this.opsHistory.unshift({
+          time: new Date().toLocaleTimeString().split(' ')[0],
+          method,
+          details,
+          bigO
+        });
+        if (this.opsHistory.length > 12) this.opsHistory.pop();
+        this.renderOpsLog();
+      }
+
+      renderOpsLog() {
+        this.el.xrayOpsLog.innerHTML = this.opsHistory.map(op => `
+          <div class="p-1.5 rounded bg-black/40 border border-white/5 flex items-center justify-between text-[10px]">
+            <div>
+              <span class="text-amber-400 font-bold">${op.method}</span>
+              <span class="text-zinc-400 ml-1">${op.details}</span>
+            </div>
+            <span class="px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px] border border-emerald-500/30">${op.bigO}</span>
+          </div>
+        `).join('');
+      }
+
+      /* Card Element Generator */
+      createCardElement(card, isWaste = false) {
+        const div = document.createElement('div');
+        div.className = `solitaire-card ${card.faceUp ? 'face-up' : 'face-down'} relative`;
+        div.id = `card-${card.id}`;
+        div.dataset.id = card.id;
+
+        const suitSymbols = {
+          spades: '♠',
+          hearts: '♥',
+          clubs: '♣',
+          diamonds: '♦'
+        };
+        const rankLabels = { 1: 'A', 11: 'J', 12: 'Q', 13: 'K' };
+        const label = rankLabels[card.rank] || `${card.rank}`;
+
+        div.innerHTML = `
+          <div class="card-inner">
+            <div class="card-face card-front ${card.color === 'red' ? 'red-suit' : 'black-suit'}">
+              <!-- Top Left Index -->
+              <div class="flex flex-col items-center leading-none text-left self-start">
+                <span class="text-xs md:text-sm font-bold font-mono">${label}</span>
+                <span class="text-[10px] md:text-xs">${suitSymbols[card.suit]}</span>
+              </div>
+              <!-- Center Emblem / Simplified Face -->
+              <div class="flex items-center justify-center text-lg md:text-2xl font-bold opacity-85">
+                ${card.rank > 10 ? label : suitSymbols[card.suit]}
+              </div>
+              <!-- Bottom Right Index -->
+              <div class="flex flex-col items-center leading-none text-right self-end rotate-180">
+                <span class="text-xs md:text-sm font-bold font-mono">${label}</span>
+                <span class="text-[10px] md:text-xs">${suitSymbols[card.suit]}</span>
+              </div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-back-pattern">
+                <span class="text-amber-400/40 text-[10px] font-mono">♠</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Card interaction bindings
+        if (card.faceUp) {
+          div.addEventListener('pointerdown', (e) => this.handlePointerDown(e, card));
+          div.addEventListener('dblclick', () => this.handleDoubleClick(card));
+        }
+
+        return div;
+      }
+
+      renderStock() {
+        const count = this.engine.stock.size();
+        this.el.stockBadge.textContent = count;
+        // Visual stack effect if cards remaining
+        this.el.stockSlot.innerHTML = '';
+        if (count > 0) {
+          const backPreview = document.createElement('div');
+          backPreview.className = 'w-full h-full rounded card-back flex items-center justify-center';
+          backPreview.innerHTML = `
+            <div class="card-back-pattern flex items-center justify-center">
+              <span class="text-cyan-300 font-mono font-bold text-sm drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]">${count}</span>
+            </div>
+          `;
+          this.el.stockSlot.appendChild(backPreview);
+        } else {
+          this.el.stockSlot.innerHTML = `
+            <svg class="w-6 h-6 text-amber-400/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+          `;
+        }
+        const badge = document.createElement('span');
+        badge.id = 'stockBadge';
+        badge.className = 'absolute bottom-1 right-1 text-[9px] font-mono text-cyan-200 bg-black/80 px-1 rounded border border-cyan-400/40';
+        badge.textContent = count;
+        this.el.stockSlot.appendChild(badge);
+      }
+
+      renderWaste() {
+        this.el.wasteSlot.innerHTML = '';
+        const arr = this.engine.waste.toArray(); // top is at index 0
+        if (arr.length === 0) {
+          this.el.wasteSlot.innerHTML = `<span class="text-zinc-600 text-xs">∅</span>`;
+          return;
+        }
+
+        // In Draw-3, fan up to 3 cards horizontally
+        const visibleCount = Math.min(this.engine.drawMode === 3 ? 3 : 1, arr.length);
+        for (let i = visibleCount - 1; i >= 0; i--) {
+          const card = arr[i];
+          const cardEl = this.createCardElement(card, true);
+          cardEl.style.position = 'absolute';
+          cardEl.style.left = `${(visibleCount - 1 - i) * 14}px`;
+          cardEl.style.top = '0';
+          cardEl.style.zIndex = `${10 - i}`;
+          this.el.wasteSlot.appendChild(cardEl);
+        }
+      }
+
+      renderFoundations() {
+        this.engine.foundations.forEach((fStack, idx) => {
+          const slot = document.getElementById(`foundation-${idx}`);
+          slot.innerHTML = '';
+          const topCard = fStack.peek();
+          if (topCard) {
+            const cardEl = this.createCardElement(topCard);
+            slot.appendChild(cardEl);
+          } else {
+            const suitSymbols = ['♠', '♥', '♣', '♦'];
+            const colors = ['text-zinc-600', 'text-red-950/60', 'text-zinc-600', 'text-red-950/60'];
+            slot.innerHTML = `<span class="${colors[idx]} text-lg">${suitSymbols[idx]}</span>`;
+          }
+        });
+      }
+
+      renderTableau() {
+        this.engine.tableau.forEach((list, colIdx) => {
+          const colEl = document.querySelector(`.tableau-col[data-col="${colIdx}"]`);
+          // clear existing cards except base slot
+          const existingCards = colEl.querySelectorAll('.solitaire-card');
+          existingCards.forEach(c => c.remove());
+
+          let curr = list.head;
+          let row = 0;
+          let topOffset = 0;
+
+          while (curr) {
+            const card = curr.card;
+            const cardEl = this.createCardElement(card);
+            cardEl.style.position = 'absolute';
+            cardEl.style.top = `${topOffset}px`;
+            cardEl.style.zIndex = `${row + 1}`;
+            cardEl.dataset.col = colIdx;
+            cardEl.dataset.row = row;
+
+            colEl.appendChild(cardEl);
+
+            // Spacing: face down cards compact (~14px), face up cards larger (~24px)
+            topOffset += card.faceUp ? clampNumber(18, window.innerWidth * 0.045, 30) : clampNumber(10, window.innerWidth * 0.024, 16);
+            curr = curr.next;
+            row++;
+          }
+        });
+      }
+
+      /* Drag and Drop with Pointer Events */
+      handlePointerDown(e, card) {
+        if (!card.faceUp) return;
+        if (e.button !== 0 && e.pointerType === 'mouse') return; // left click only
+
+        const cardEl = document.getElementById(`card-${card.id}`);
+        if (!cardEl) return;
+
+        const rect = cardEl.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
+
+        // Gather all cards in the run if dragging from tableau
+        const meta = this.engine.cardMap.get(card.id);
+        const dragRun = [];
+
+        if (meta.pile.startsWith('t-')) {
+          const col = parseInt(meta.pile.split('-')[1]);
+          const tab = this.engine.tableau[col];
+          let curr = tab.findNode(c => c.id === card.id);
+          while (curr) {
+            dragRun.push(curr.card);
+            curr = curr.next;
+          }
+        } else {
+          dragRun.push(card);
+        }
+
+        // Highlight legal drop targets
+        this.highlightLegalDropTargets(card);
+
+        this.dragState = {
+          card,
+          dragRun,
+          meta,
+          startX: rect.left,
+          startY: rect.top,
+          offsetX,
+          offsetY,
+          dragElements: dragRun.map((c, i) => {
+            const el = document.getElementById(`card-${c.id}`);
+            return {
+              el,
+              originalTop: el.style.top,
+              originalLeft: el.style.left,
+              originalZIndex: el.style.zIndex,
+              relativeY: i * clampNumber(18, window.innerWidth * 0.045, 30)
+            };
+          })
+        };
+
+        // Lift cards
+        this.dragState.dragElements.forEach((item, idx) => {
+          item.el.classList.add('is-dragging');
+          item.el.style.zIndex = `${1000 + idx}`;
+        });
+
+        this.sound.playSlide();
+
+        const moveHandler = (ev) => this.handlePointerMove(ev);
+        const upHandler = (ev) => {
+          window.removeEventListener('pointermove', moveHandler);
+          window.removeEventListener('pointerup', upHandler);
+          this.handlePointerUp(ev);
+        };
+
+        window.addEventListener('pointermove', moveHandler);
+        window.addEventListener('pointerup', upHandler);
+      }
+
+      handlePointerMove(e) {
+        if (!this.dragState) return;
+        const x = e.clientX - this.dragState.offsetX;
+        const y = e.clientY - this.dragState.offsetY;
+
+        this.dragState.dragElements.forEach((item) => {
+          item.el.style.position = 'fixed';
+          item.el.style.left = `${x}px`;
+          item.el.style.top = `${y + item.relativeY}px`;
+        });
+      }
+
+      handlePointerUp(e) {
+        if (!this.dragState) return;
+        this.clearDropHighlights();
+
+        const { card, meta, dragElements } = this.dragState;
+        const dropPoint = { x: e.clientX, y: e.clientY };
+
+        // Identify target slot under pointer
+        const dropTarget = this.findDropTarget(dropPoint);
+
+        let moveResult = { ok: false, reason: 'Dropped in empty area' };
+        if (dropTarget) {
+          moveResult = this.engine.move(card.id, dropTarget);
+        }
+
+        if (moveResult.ok) {
+          this.sound.playSlide();
+          this.logOp('move()', moveResult.reason, 'O(1)');
+          if (dropTarget.startsWith('f-')) {
+            this.sound.playFoundation();
+          }
+          this.renderAll();
+          if (this.engine.isWon()) {
+            this.triggerVictory();
+          }
+        } else {
+          // Snap back with shake
+          this.sound.playThud();
+          this.showToast(moveResult.reason);
+          dragElements.forEach(item => {
+            item.el.classList.remove('is-dragging');
+            item.el.classList.add('animate-shake');
+            setTimeout(() => item.el.classList.remove('animate-shake'), 400);
+          });
+          this.renderAll();
+        }
+
+        this.dragState = null;
+      }
+
+      findDropTarget(point) {
+        // 1. Check Foundations
+        for (let i = 0; i < 4; i++) {
+          const slot = document.getElementById(`foundation-${i}`);
+          const rect = slot.getBoundingClientRect();
+          if (point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom) {
+            return `f-${i}`;
+          }
+        }
+
+        // 2. Check Tableau Columns
+        for (let col = 0; col < 7; col++) {
+          const colEl = document.querySelector(`.tableau-col[data-col="${col}"]`);
+          const rect = colEl.getBoundingClientRect();
+          if (point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom + 200) {
+            return `t-${col}`;
+          }
+        }
+
+        return null;
+      }
+
+      highlightLegalDropTargets(card) {
+        // Foundation check
+        const fIdx = SUITS.indexOf(card.suit);
+        const topF = this.engine.foundations[fIdx].peek();
+        if ((!topF && card.rank === 1) || (topF && card.rank === topF.rank + 1)) {
+          document.getElementById(`foundation-${fIdx}`).classList.add('valid-target');
+        }
+
+        // Tableau check
+        for (let col = 0; col < 7; col++) {
+          const tab = this.engine.tableau[col];
+          const topCard = tab.tail ? tab.tail.card : null;
+          if (this.engine.isValidTableauPlacement(card, topCard)) {
+            const colBase = document.querySelector(`.tableau-base-slot[data-pile="t-${col}"]`);
+            if (colBase) colBase.classList.add('valid-target');
+            if (tab.tail) {
+              const el = document.getElementById(`card-${tab.tail.card.id}`);
+              if (el) el.classList.add('valid-target');
+            }
+          }
+        }
+      }
+
+      clearDropHighlights() {
+        document.querySelectorAll('.valid-target').forEach(el => el.classList.remove('valid-target'));
+      }
+
+      handleDoubleClick(card) {
+        const res = this.engine.moveToFoundation(card.id);
+        if (res.ok) {
+          this.sound.playFoundation();
+          this.logOp('moveToFoundation()', res.reason, 'O(1)');
+          this.renderAll();
+          if (this.engine.isWon()) {
+            this.triggerVictory();
+          }
+        } else {
+          this.sound.playThud();
+          this.showToast(res.reason);
+        }
+      }
+
+      attachEventListeners() {
+        // Stock click
+        this.el.stockSlot.addEventListener('click', () => {
+          const res = this.engine.draw();
+          if (res.ok) {
+            this.sound.playSlide();
+            this.logOp('draw()', res.reason, 'O(1)');
+            this.renderAll();
+          } else {
+            this.sound.playThud();
+            this.showToast(res.reason);
+          }
+        });
+
+        // Hint button
+        document.getElementById('btnHint').addEventListener('click', () => this.triggerHint());
+
+        // Undo & Redo
+        document.getElementById('btnUndo').addEventListener('click', () => {
+          const res = this.engine.undo();
+          if (res.ok) {
+            this.sound.playSlide();
+            this.logOp('undo()', 'State reverted via CustomStack', 'O(1)');
+            this.renderAll();
+          } else {
+            this.showToast(res.reason);
+          }
+        });
+
+        document.getElementById('btnRedo').addEventListener('click', () => {
+          const res = this.engine.redo();
+          if (res.ok) {
+            this.sound.playSlide();
+            this.logOp('redo()', 'State reapplied via CustomStack', 'O(1)');
+            this.renderAll();
+          } else {
+            this.showToast(res.reason);
+          }
+        });
+
+        // Draw mode toggle
+        document.getElementById('btnDrawMode').addEventListener('click', () => {
+          this.engine.drawMode = this.engine.drawMode === 1 ? 3 : 1;
+          this.el.drawModeLabel.textContent = this.engine.drawMode;
+          this.showToast(`Draw Mode: ${this.engine.drawMode} Card${this.engine.drawMode > 1 ? 's' : ''}`);
+        });
+
+        // Sound toggle
+        document.getElementById('btnSound').addEventListener('click', () => {
+          this.sound.muted = !this.sound.muted;
+          this.el.soundIconOn.classList.toggle('hidden', this.sound.muted);
+          this.el.soundIconOff.classList.toggle('hidden', !this.sound.muted);
+          this.showToast(`Sound: ${this.sound.muted ? 'OFF' : 'ON'}`);
+          if (!this.sound.muted) this.sound.playFlip();
+        });
+
+        // Theme toggle
+        document.getElementById('btnTheme').addEventListener('click', () => {
+          this.themeIdx = (this.themeIdx + 1) % this.themes.length;
+          this.applyTheme(this.themes[this.themeIdx]);
+        });
+
+        // X-Ray Drawer Toggle
+        this.el.btnXRay.addEventListener('click', () => this.toggleXRay(true));
+        this.el.btnCloseXray.addEventListener('click', () => this.toggleXRay(false));
+
+        // X-Ray internal tabs
+        document.querySelectorAll('.xray-tab').forEach(tab => {
+          tab.addEventListener('click', (e) => {
+            document.querySelectorAll('.xray-tab').forEach(t => {
+              t.classList.remove('text-amber-300', 'border-b-2', 'border-amber-400', 'bg-amber-500/10');
+              t.classList.add('text-zinc-400');
+            });
+            e.currentTarget.classList.add('text-amber-300', 'border-b-2', 'border-amber-400', 'bg-amber-500/10');
+            e.currentTarget.classList.remove('text-zinc-400');
+
+            const view = e.currentTarget.dataset.view;
+            document.getElementById('viewStructures').classList.toggle('hidden', view !== 'structures');
+            document.getElementById('viewHashMap').classList.toggle('hidden', view !== 'hashmap');
+            document.getElementById('viewOps').classList.toggle('hidden', view !== 'ops');
+          });
+        });
+
+        // New Game button
+        document.getElementById('btnNewGame').addEventListener('click', () => this.startNewGame());
+        document.getElementById('btnWinRestart').addEventListener('click', () => this.startNewGame());
+
+        // Copy seed
+        document.getElementById('btnCopySeed').addEventListener('click', () => {
+          navigator.clipboard.writeText(`${this.engine.seed}`).then(() => {
+            this.showToast(`Seed #${this.engine.seed} copied to clipboard!`);
+          });
+        });
+
+        // Keyboard navigation
+        window.addEventListener('keydown', (e) => {
+          if (e.target.tagName === 'INPUT') return;
+          const k = e.key.toUpperCase();
+          if (k === ' ' || k === 'D') {
+            e.preventDefault();
+            this.el.stockSlot.click();
+          } else if (k === 'U') {
+            document.getElementById('btnUndo').click();
+          } else if (k === 'R') {
+            document.getElementById('btnRedo').click();
+          } else if (k === 'H') {
+            this.triggerHint();
+          } else if (k === 'N') {
+            this.startNewGame();
+          } else if (k === 'X') {
+            this.toggleXRay();
+          } else if (e.key === 'Escape') {
+            this.toggleXRay(false);
+            this.closeWinModal();
+          }
+        });
+
+        window.addEventListener('resize', () => {
+          this.renderTableau();
+        });
+      }
+
+      triggerHint() {
+        const hint = this.engine.hint();
+        if (!hint) {
+          this.showToast('No legal moves found.');
+          return;
+        }
+
+        this.showToast(hint.reason);
+        this.sound.playFlip();
+
+        if (hint.src === 'stockSlot') {
+          this.el.stockSlot.classList.add('hint-highlight');
+          setTimeout(() => this.el.stockSlot.classList.remove('hint-highlight'), 1800);
+          return;
+        }
+
+        const srcEl = document.getElementById(`card-${hint.src}`);
+        const dstEl = document.getElementById(hint.dst) || document.querySelector(`.tableau-base-slot[data-pile="${hint.dst}"]`);
+
+        if (srcEl) {
+          srcEl.classList.add('hint-highlight');
+          setTimeout(() => srcEl.classList.remove('hint-highlight'), 2000);
+        }
+        if (dstEl) {
+          dstEl.classList.add('hint-highlight');
+          setTimeout(() => dstEl.classList.remove('hint-highlight'), 2000);
+        }
+      }
+
+      applyTheme(name) {
+        document.documentElement.setAttribute('data-theme', name);
+        localStorage.setItem('solitaire_theme', name);
+        this.themeIdx = this.themes.indexOf(name);
+        const btnTheme = document.getElementById('btnTheme');
+        if (btnTheme) {
+          const themeLabel = name === 'neon' ? 'NEON COAST' : (name === 'casino' ? 'MIDNIGHT CASINO' : 'PAPER MINIMAL');
+          btnTheme.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-[#ff007a]"></span><span>${themeLabel}</span><span class="text-[9px]">▼</span>`;
+        }
+        this.showToast(`Theme: ${name.toUpperCase()}`);
+      }
+
+      toggleXRay(forceOpen = null) {
+        const isOpen = !this.el.xrayDrawer.classList.contains('translate-x-full');
+        const shouldOpen = forceOpen !== null ? forceOpen : !isOpen;
+        if (shouldOpen) {
+          this.el.xrayDrawer.classList.remove('translate-x-full');
+          this.updateXRay();
+        } else {
+          this.el.xrayDrawer.classList.add('translate-x-full');
+        }
+      }
+
+      updateXRay() {
+        // 1. Stock Queue Stream
+        const stockArr = this.engine.stock.toArray();
+        if (stockArr.length === 0) {
+          this.el.xrayQueueStream.innerHTML = `<span class="text-zinc-500">[Queue Empty]</span>`;
+        } else {
+          this.el.xrayQueueStream.innerHTML = stockArr.slice(0, 8).map((c, i) => `
+            <span class="px-1.5 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] ${i === 0 ? 'text-amber-300 font-bold border-amber-400' : 'text-zinc-400'}">
+              ${c.id}
+            </span>
+          `).join('') + (stockArr.length > 8 ? `<span class="text-zinc-500">+${stockArr.length - 8}</span>` : '');
+        }
+
+        // 2. Waste Top & Foundation Counts
+        const topW = this.engine.waste.peek();
+        this.el.xrayWasteTop.textContent = topW ? topW.id : '∅ Empty';
+
+        let fTotal = 0;
+        this.engine.foundations.forEach(f => fTotal += f.size());
+        this.el.xrayFoundationsTotal.textContent = `${fTotal} / 52 cards`;
+
+        // 3. Tableau Doubly Linked Lists
+        this.el.xrayTableauList.innerHTML = this.engine.tableau.map((tab, idx) => {
+          const size = tab.size();
+          const headCard = tab.head ? tab.head.card.id : 'null';
+          const tailCard = tab.tail ? tab.tail.card.id : 'null';
+          return `
+            <div class="flex items-center justify-between bg-black/30 p-1.5 rounded border border-white/5">
+              <span class="text-amber-200">Col ${idx + 1} (${size})</span>
+              <div class="flex items-center gap-1 font-mono text-[9px]">
+                <span class="text-zinc-400">H:</span><b class="text-white">${headCard}</b>
+                <span class="text-zinc-500">&harr;</span>
+                <span class="text-zinc-400">T:</span><b class="text-emerald-400">${tailCard}</b>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // 4. Undo/Redo Stacks
+        this.el.xrayUndoCount.textContent = this.engine.undoStack.size();
+        this.el.xrayRedoCount.textContent = this.engine.redoStack.size();
+
+        // 5. HashMap Table
+        const entries = this.engine.cardMap.entries();
+        this.el.xrayHashMapBody.innerHTML = entries.slice(0, 16).map(e => `
+          <tr class="hover:bg-white/5">
+            <td class="p-1 font-bold ${e.key.includes('H') || e.key.includes('D') ? 'text-red-400' : 'text-zinc-200'}">${e.key}</td>
+            <td class="p-1 text-zinc-300">${e.value.pile}</td>
+            <td class="p-1 text-zinc-400">${e.value.index}</td>
+            <td class="p-1">${e.value.faceUp ? '<span class="text-emerald-400">UP</span>' : '<span class="text-zinc-600">DOWN</span>'}</td>
+          </tr>
+        `).join('');
+      }
+
+      /* Win Victory Cascade & Modal */
+      triggerVictory() {
+        clearInterval(this.timerInterval);
+        this.sound.playWinFanfare();
+
+        // Fill Stats
+        document.getElementById('winFinalScore').textContent = this.engine.score;
+        document.getElementById('winFinalTime').textContent = this.el.hudTimer.textContent;
+        document.getElementById('winFinalMoves').textContent = this.engine.moves;
+
+        // Show Modal
+        this.el.winModal.classList.remove('opacity-0', 'pointer-events-none');
+
+        // Start Bouncing Cards Win Animation on Canvas
+        this.startCardBounceCanvas();
+      }
+
+      closeWinModal() {
+        this.el.winModal.classList.add('opacity-0', 'pointer-events-none');
+        if (this.winAnimFrame) cancelAnimationFrame(this.winAnimFrame);
+        const canvas = this.el.winCanvas;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      startCardBounceCanvas() {
+        const canvas = this.el.winCanvas;
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const suits = ['♠', '♥', '♣', '♦'];
+        const colors = ['#ffffff', '#ef4444', '#00f2fe', '#e5b958'];
+
+        for (let i = 0; i < 75; i++) {
+          particles.push({
+            x: Math.random() * canvas.width,
+            y: -20 - Math.random() * 200,
+            vx: (Math.random() - 0.5) * 6,
+            vy: Math.random() * 5 + 3,
+            suit: suits[Math.floor(Math.random() * suits.length)],
+            color: colors[Math.floor(Math.random() * colors.length)],
+            size: Math.random() * 20 + 16,
+            rotation: Math.random() * Math.PI * 2,
+            rotSpeed: (Math.random() - 0.5) * 0.1
+          });
+        }
+
+        const renderWin = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rotation += p.rotSpeed;
+            if (p.y > canvas.height) {
+              p.y = -20;
+              p.x = Math.random() * canvas.width;
+            }
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation);
+            ctx.fillStyle = p.color;
+            ctx.font = `${p.size}px monospace`;
+            ctx.fillText(p.suit, 0, 0);
+            ctx.restore();
+          });
+
+          this.winAnimFrame = requestAnimationFrame(renderWin);
+        };
+        renderWin();
+      }
+    }
+
+    function clampNumber(min, val, max) {
+      return Math.min(Math.max(val, min), max);
+    }
+
+    // Initialize application when DOM ready
+    window.addEventListener('DOMContentLoaded', () => {
+      window.solitaireApp = new SolitaireUI();
+    });
+  </script>
+
+
+
+
+</body></html>
